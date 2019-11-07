@@ -4,6 +4,7 @@ import com.common.a.dto.AccessToken;
 import com.common.a.dto.GitHubUser;
 import com.common.a.provider.GitHubProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,14 +15,20 @@ public class GitHubController {
 
     @Autowired
     GitHubProvider gitHubProvider;
+    @Value("${github.client.id}")
+    private String clientId;
+    @Value("${github.client.secret}")
+    private String clientSecret;
+    @Value("${github.client.redirect_uri}")
+    private String redirectUri;
 
     @RequestMapping("/callback")
     public String callback(@RequestParam(name = "code") String code, @RequestParam(name = "state") String state, Model model) {
         AccessToken accessToken = new AccessToken();
-        accessToken.setClient_id("Iv1.7048a4811ab297d6");
-        accessToken.setClient_secret("4b1dcce7c90e1fca9c7d212223c836975c152970");
+        accessToken.setClient_id(clientId);
+        accessToken.setClient_secret(clientSecret);
         accessToken.setCode(code);
-        accessToken.setRedirect_uri("http://localhost:8887/callback");
+        accessToken.setRedirect_uri(redirectUri);
         accessToken.setState(state);
         String token = gitHubProvider.getAccessToken(accessToken);
         GitHubUser user = gitHubProvider.getUser(token);
